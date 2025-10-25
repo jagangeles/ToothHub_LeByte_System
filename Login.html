@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | ToothHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .brand-bg {
+      background-color: #03555E;
+    }
+    .brand-text {
+      color: #03555E;
+    }
+    .brand-hover:hover {
+      background-color: #02464e; /* darker shade for hover */
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <header class="brand-bg text-white">
+    <div class="container mx-auto px-4 py-4 flex items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+          <span class="brand-text font-bold text-xl">TD</span>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold">ToothHub</h1>
+          <p class="text-sm opacity-90">Happy Tooth Dae Dental Clinic</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Form -->
+  <div class="flex items-center justify-center py-16 px-4">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold brand-text mb-2">Happy Tooth Dae</h2>
+        <p class="text-gray-500">Sign in to your account</p>
+      </div>
+
+      <div class="bg-white shadow-lg rounded-xl">
+        <div class="p-6">
+          <h3 class="text-2xl font-bold text-center brand-text mb-6">Log in</h3>
+
+          <form id="loginForm" class="space-y-4">
+            <div class="space-y-2">
+              <label for="username" class="brand-text font-medium">Email</label>
+              <input
+                id="username"
+                type="text"
+                placeholder="Enter your email"
+                class="w-full h-12 px-3 border rounded-lg focus:outline-none focus:ring-2"
+                style="border-color:#03555E; focus:ring-color:#03555E;"
+                required
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label for="password" class="brand-text font-medium">Password</label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                class="w-full h-12 px-3 border rounded-lg focus:outline-none focus:ring-2"
+                style="border-color:#03555E; focus:ring-color:#03555E;"
+                required
+              />
+            </div>
+
+            <div class="text-right">
+              <a href="/forgot-password" class="brand-text hover:underline text-sm">Forgot Password</a>
+            </div>
+
+            <button
+              id="loginBtn"
+              type="submit"
+              class="w-full h-12 text-lg font-medium text-white rounded-lg brand-bg brand-hover"
+            >
+              Log in
+            </button>
+          </form>
+
+          <div class="text-center mt-6">
+            <p class="text-gray-500">
+              Don't have an account?
+              <a href="/signup" class="brand-text hover:underline font-medium">Sign Up</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-8">
+        <a href="/" class="brand-text hover:underline flex items-center justify-center gap-2">
+          <span>←</span> Back to Home
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const loginBtn = document.getElementById("loginBtn");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      loginBtn.textContent = "Signing in...";
+      loginBtn.disabled = true;
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      setTimeout(() => {
+        if (username && password) {
+          // Mock session storage
+          localStorage.setItem(
+            "userSession",
+            JSON.stringify({
+              username,
+              loginTime: new Date().toISOString(),
+            })
+          );
+
+          // Redirect to dashboard
+          window.location.href = "Dashboard.html";
+        } else {
+          alert("Please enter valid credentials");
+          loginBtn.textContent = "Log in";
+          loginBtn.disabled = false;
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

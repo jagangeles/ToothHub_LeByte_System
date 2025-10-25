@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Appointment - ToothHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#03555E',
+            'primary-foreground': '#FFFFFF',
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    .card {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+    .card-header {
+      padding: 1.5rem 1.5rem 0 1.5rem;
+    }
+    .card-content {
+      padding: 1.5rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+  <div id="app-root"></div>
+
+  <script>
+    // --- Data ---
+    const services = [
+      { id: 1, name: "Oral Prophylaxis", duration: "60 minutes", price: 1500, description: "Professional teeth cleaning and polishing" },
+      { id: 2, name: "Tooth Extraction", duration: "30 minutes", price: 3000, description: "Safe and painless tooth removal" },
+      { id: 3, name: "Restoration", duration: "90 minutes", price: 5000, description: "Dental fillings and restorations" },
+      { id: 4, name: "Root Canal Treatment", duration: "120 minutes", price: 8000, description: "Complete root canal therapy" },
+      { id: 5, name: "Orthodontics", duration: "45 minutes", price: 12000, description: "Braces consultation and adjustment" },
+      { id: 6, name: "Whitening", duration: "60 minutes", price: 6000, description: "Professional teeth whitening treatment" },
+    ];
+
+    const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
+
+    const dentists = [
+      { id: 1, name: "Dentist 1", specialty: "General Dentistry", experience: "8 years", image: "https://via.placeholder.com/64x64?text=F" },
+      { id: 2, name: "Dentist 2", specialty: "Orthodontics", experience: "12 years", image: "https://via.placeholder.com/64x64?text=M" },
+      { id: 3, name: "Dentist 3", specialty: "Oral Surgery", experience: "10 years", image: "https://via.placeholder.com/64x64?text=FS" },
+    ];
+
+    const iconMap = {
+      Tooth: 'fas fa-tooth', 
+      Calendar: 'fas fa-calendar-alt',
+      Clock: 'fas fa-clock',
+      User: 'fas fa-user-md',
+      CreditCard: 'fas fa-credit-card',
+      ArrowLeft: 'fas fa-arrow-left',
+      ArrowRight: 'fas fa-arrow-right',
+      Check: 'fas fa-check',
+      ChevronLeft: 'fas fa-chevron-left',
+      ChevronRight: 'fas fa-chevron-right',
+    };
+
+    const steps = [
+  { number: 1, title: "Select Service", icon: iconMap.Tooth },
+  { number: 2, title: "Choose Dentist", icon: iconMap.User },
+  { number: 3, title: "Date & Time", icon: iconMap.Clock },
+  { number: 4, title: "Payment", icon: iconMap.CreditCard },
+];
+
+    // --- State ---
+    let state = {
+      currentStep: 1,
+      selectedServices: [],
+      selectedDate: "",
+      selectedTime: "",
+      selectedDentist: null,
+      currentMonth: new Date(),
+    };
+
+    function setState(newState) {
+      state = { ...state, ...newState };
+      render();
+    }
+
+    // --- Logic ---
+    const nextStep = () => {
+      if (state.currentStep < 4 && canProceed()) {
+        setState({ currentStep: state.currentStep + 1 });
+      }
+    };
+
+    const prevStep = () => {
+      if (state.currentStep > 1) {
+        setState({ currentStep: state.currentStep - 1 });
+      }
+    };
+
+    const canProceed = () => {
+  switch (state.currentStep) {
+    case 1: return state.selectedServices.length > 0;
+    case 2: return state.selectedDentist !== null;   // Dentist first now
+    case 3: return state.selectedDate && state.selectedTime;
+    case 4: return true;
+    default: return false;
+  }
+};
+
+    const goToPreviousMonth = () => {
+      const newMonth = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth() - 1);
+      setState({ currentMonth: newMonth });
+    };
+
+    const goToNextMonth = () => {
+      const newMonth = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth() + 1);
+      setState({ currentMonth: newMonth });
+    };
+
+    const generateCalendarDays = (currentMonth) => {
+      const year = currentMonth.getFullYear();
+      const month = currentMonth.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+      const startingDayOfWeek = firstDay.getDay();
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const days = [];
+      for (let i = 0; i < startingDayOfWeek; i++) days.push(null);
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const dateString = date.toISOString().split("T")[0];
+        const isPast = date < today;
+        const isToday = date.getTime() === today.getTime();
+        days.push({
+          day, date: dateString, isPast, isToday,
+          fullDate: date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }),
+        });
+      }
+      return days;
+    };
+
+    // --- Render UI ---
+    function renderHeader() {
+      return `
+        <div class="bg-primary text-white p-4">
+          <div class="max-w-4xl mx-auto flex items-center gap-4">
+            <a href="Dashboard.html" class="text-white hover:text-gray-200">
+              <i class="${iconMap.ArrowLeft}"></i>
+            </a>
+            <div>
+              <h1 class="text-xl font-semibold">Book Appointment</h1>
+              <p class="text-primary-foreground/80">Schedule your dental visit</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderProgressBar() {
+      const { currentStep } = state;
+      return `
+        <div class="mb-8">
+          <div class="flex items-center justify-between mb-4">
+            ${steps.map((step, index) => `
+              <div class="flex items-center">
+                <div class="flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                  currentStep > step.number
+                    ? "bg-primary border-primary text-white"
+                    : currentStep === step.number
+                      ? "border-primary text-primary bg-white"
+                      : "border-gray-300 text-gray-400 bg-white"
+                }">
+                  ${currentStep > step.number ? `<i class="${iconMap.Check}"></i>` : `<i class="${step.icon}"></i>`}
+                </div>
+                <span class="ml-2 text-sm font-medium ${currentStep >= step.number ? "text-primary" : "text-gray-400"}">
+                  ${step.title}
+                </span>
+                ${index < steps.length - 1 ? `<div class="w-16 h-0.5 mx-4 ${currentStep > step.number ? "bg-primary" : "bg-gray-300"}"></div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStep1() {
+      const { selectedServices } = state;
+      return `
+        <div class="grid gap-4 md:grid-cols-2">
+          ${services.map(service => {
+            const isSelected = selectedServices.find(s => s.id === service.id);
+            return `
+              <div
+                class="p-4 border rounded-lg cursor-pointer transition-all ${
+                  isSelected ? "border-primary bg-primary/5" : "border-gray-200 hover:border-primary/50"
+                }"
+                onclick="toggleService(${service.id})"
+              >
+                <div class="flex items-start gap-3">
+                  <div class="w-5 h-5 border-2 rounded flex items-center justify-center mt-1 ${
+                    isSelected ? "border-primary bg-primary" : "border-gray-300"
+                  }">
+                    ${isSelected ? `<i class="${iconMap.Check} text-white text-xs"></i>` : ''}
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex justify-between items-start mb-2">
+                      <h3 class="font-semibold text-lg">${service.name}</h3>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">₱${service.price.toLocaleString()}</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">${service.description}</p>
+                    <p class="text-primary text-sm font-medium">${service.duration}</p>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function renderStep2() {
+      const { currentMonth, selectedDate, selectedTime } = state;
+      const calendarDays = generateCalendarDays(currentMonth);
+      const monthYear = currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+      const selectedDayDetails = calendarDays.find(d => d && d.date === selectedDate);
+
+      return `
+        <div class="space-y-6">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-semibold text-lg">Select Date</h3>
+              <div class="flex items-center gap-4">
+                <button class="p-2 hover:bg-gray-100 rounded-lg" onclick="goToPreviousMonth()"><i class="${iconMap.ChevronLeft}"></i></button>
+                <span class="font-semibold text-lg min-w-[200px] text-center">${monthYear}</span>
+                <button class="p-2 hover:bg-gray-100 rounded-lg" onclick="goToNextMonth()"><i class="${iconMap.ChevronRight}"></i></button>
+              </div>
+            </div>
+            <div class="bg-white border rounded-lg p-4">
+              <div class="grid grid-cols-7 gap-1 mb-2">
+                ${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day => `<div class="text-center text-sm font-semibold text-gray-600 p-3">${day}</div>`).join('')}
+              </div>
+              <div class="grid grid-cols-7 gap-1">
+                ${calendarDays.map(day => `
+                  <div class="aspect-square">
+                    ${day ? `
+                      <button class="w-full h-full flex items-center justify-center text-sm font-medium rounded-lg ${
+                        day.isPast
+                          ? "text-gray-300 cursor-not-allowed"
+                          : selectedDate === day.date
+                            ? "bg-primary text-white"
+                            : day.isToday
+                              ? "bg-primary/10 text-primary border border-primary"
+                              : "hover:bg-primary/5 text-gray-700"
+                      }" ${day.isPast ? "disabled" : `onclick="setSelectedDate('${day.date}')"`}>
+                        ${day.day}
+                      </button>` : `<div></div>`}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            ${selectedDate ? `<p class="mt-4 text-sm text-primary font-medium bg-primary/5 p-3 rounded-lg">Selected: ${selectedDayDetails.fullDate}</p>` : ''}
+          </div>
+          <div>
+            <h3 class="font-semibold mb-4">Select Time</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              ${timeSlots.map(time => `
+                <button class="p-3 border rounded-lg ${
+                  selectedTime === time ? "border-primary bg-primary text-white" : "border-gray-200 hover:border-primary/50"
+                }" onclick="setSelectedTime('${time}')">${time}</button>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStep3() {
+      const { selectedDentist } = state;
+      return `
+        <div class="grid gap-4 max-w-2xl mx-auto">
+          ${dentists.map(dentist => `
+            <div class="p-4 border rounded-lg cursor-pointer transition-all ${
+              selectedDentist?.id === dentist.id ? "border-primary bg-primary/5" : "border-gray-200 hover:border-primary/50"
+            }" onclick="setSelectedDentist(${dentist.id})">
+              <div class="flex items-center gap-4">
+                <img src="${dentist.image}" alt="${dentist.name}" class="w-16 h-16 rounded-full object-cover"/>
+                <div class="flex-1">
+                  <h3 class="font-semibold text-lg">${dentist.name}</h3>
+                  <p class="text-primary font-medium">${dentist.specialty}</p>
+                  <p class="text-gray-600 text-sm">${dentist.experience} experience</p>
+                </div>
+                ${selectedDentist?.id === dentist.id ? `<i class="${iconMap.Check} text-primary"></i>` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderStep4() {
+      const { selectedServices, selectedDate, selectedTime, selectedDentist, currentMonth } = state;
+      const totalServicePrice = selectedServices.reduce((total, service) => total + service.price, 0);
+      const calendarDays = generateCalendarDays(currentMonth);
+      const selectedDayDetails = calendarDays.find(d => d && d.date === selectedDate);
+
+      return `
+        <div class="max-w-md mx-auto text-center space-y-6">
+          <div class="bg-gray-50 p-6 rounded-lg">
+            <h3 class="font-semibold text-lg mb-4">Appointment Summary</h3>
+            <div class="space-y-2 text-left">
+              <div class="flex justify-between"><span>Services:</span><div>${selectedServices.map(s => `<div>${s.name}</div>`).join('')}</div></div>
+              <div class="flex justify-between"><span>Date:</span><span>${selectedDayDetails?.fullDate || 'N/A'}</span></div>
+              <div class="flex justify-between"><span>Time:</span><span>${selectedTime || 'N/A'}</span></div>
+              <div class="flex justify-between"><span>Dentist:</span><span>${selectedDentist?.name || 'N/A'}</span></div>
+              <div class="flex justify-between"><span>Total:</span><span>₱${totalServicePrice.toLocaleString()}</span></div>
+              <hr class="my-3 border-gray-300"/>
+              <div class="flex justify-between text-lg font-semibold"><span>Downpayment:</span><span>₱100</span></div>
+            </div>
+          </div>
+          <div class="bg-white border-2 border-dashed border-gray-300 p-6 rounded-lg">
+            <h4 class="font-semibold mb-4">Pay via GCash</h4>
+            <div class="bg-gray-100 p-4 rounded-lg mb-4">
+              <div class="w-48 h-48 mx-auto bg-gray-200 flex items-center justify-center text-gray-500 rounded-md">[GCash QR Code]</div>
+            </div>
+            <p class="text-sm text-gray-600 mb-4">Scan QR code to pay ₱100</p>
+            <div class="text-sm text-gray-500"><p>GCash Number: 0917-123-4567</p><p>Account Name: ToothHub Dental Clinic</p></div>
+          </div>
+          <button class="w-full px-4 py-3 text-lg font-medium rounded-md text-white bg-primary hover:bg-primary/90">Confirm Payment & Book Appointment</button>
+        </div>
+      `;
+    }
+
+    function renderStepContent() {
+  switch (state.currentStep) {
+    case 1: return renderStep1(); // Service
+    case 2: return renderStep3(); // Dentist
+    case 3: return renderStep2(); // Date & Time
+    case 4: return renderStep4(); // Payment
+  }
+}
+
+    function renderNavigationButtons() {
+      const { currentStep } = state;
+      const canProceedStatus = canProceed();
+      const prevButton = `
+        <button onclick="prevStep()" ${currentStep === 1 ? 'disabled' : ''} class="px-4 py-2 border rounded-md ${currentStep===1?"opacity-50":""}">
+          <i class="${iconMap.ArrowLeft}"></i> Previous
+        </button>`;
+      let nextSection = '';
+      if (currentStep < 4) {
+        nextSection = `<button onclick="nextStep()" ${!canProceedStatus ? 'disabled' : ''} class="px-4 py-2 text-white bg-primary rounded-md ${!canProceedStatus?"opacity-50":""}">Next <i class="${iconMap.ArrowRight}"></i></button>`;
+      } else {
+        nextSection = `<button onclick="alert('Booking Confirmed!')" class="px-4 py-2 text-white bg-primary rounded-md">Confirm & Book</button>`;
+      }
+      return `<div class="flex justify-between mt-8">${prevButton}${nextSection}</div>`;
+    }
+
+    function render() {
+      const appRoot = document.getElementById("app-root");
+      appRoot.innerHTML = `
+        ${renderHeader()}
+        <div class="max-w-4xl mx-auto px-4 py-8">
+          <div class="card">
+            <div class="card-header">${renderProgressBar()}</div>
+            <div class="card-content">${renderStepContent()}</div>
+            <div class="px-6 pb-6">${renderNavigationButtons()}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- Window Functions ---
+    window.toggleService = (serviceId) => {
+      const fullService = services.find(s => s.id === serviceId);
+      if (fullService) {
+        const isSelected = state.selectedServices.find((s) => s.id === fullService.id);
+        const newServices = isSelected
+            ? state.selectedServices.filter((s) => s.id !== fullService.id)
+            : [...state.selectedServices, fullService];
+        setState({ selectedServices: newServices });
+      }
+    };
+
+    window.setSelectedDate = (date) => setState({ selectedDate: date });
+    window.setSelectedTime = (time) => setState({ selectedTime: time });
+    window.setSelectedDentist = (dentistId) => {
+      const fullDentist = dentists.find(d => d.id === dentistId);
+      if (fullDentist) {
+        setState({ selectedDentist: fullDentist });
+      }
+    };
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>

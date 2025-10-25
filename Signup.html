@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - ToothHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    .brand-bg {
+      background-color: #03555E;
+    }
+    .brand-text {
+      color: #03555E;
+    }
+    .brand-hover:hover {
+      background-color: #02464e; /* darker shade for hover */
+    }
+  </style>
+  </head>
+  <body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+     <header class="brand-bg text-white">
+    <div class="container mx-auto px-4 py-4 flex items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+          <span class="brand-text font-bold text-xl">TD</span>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold">ToothHub</h1>
+          <p class="text-sm opacity-90">Happy Tooth Dae Dental Clinic</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+    <!-- Page Content -->
+    <div class="container mx-auto px-4 py-8">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold mb-2 text-[#03555E]">Create Your Account</h1>
+        <p class="text-gray-600">Join ToothHub for easy appointment booking</p>
+      </div>
+
+      <div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-bold text-[#03555E] mb-2">Patient Registration</h2>
+        <p class="text-gray-600 mb-6">Create your account to start booking appointments</p>
+
+        <form class="space-y-6">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label for="firstName" class="block text-sm font-medium">First Name</label>
+              <input id="firstName" type="text" placeholder="Enter your first name"
+                class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+            </div>
+            <div>
+              <label for="dateOfBirth" class="block text-sm font-medium">Date of Birth</label>
+              <input id="dateOfBirth" type="date"
+                class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label for="middleName" class="block text-sm font-medium">Middle Name</label>
+              <input id="middleName" type="text" placeholder="Enter your middle name"
+                class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+            </div>
+            <div>
+              <label for="gender" class="block text-sm font-medium">Gender</label>
+              <select id="gender" class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]">
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label for="lastName" class="block text-sm font-medium">Last Name</label>
+              <input id="lastName" type="text" placeholder="Enter your last name"
+                class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+            </div>
+            <div>
+              <label for="phoneNumber" class="block text-sm font-medium">Phone Number</label>
+              <input id="phoneNumber" type="text" placeholder="Enter your number"
+                class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+            </div>
+          </div>
+
+          <div>
+            <label for="streetAddress" class="block text-sm font-medium">Street Address</label>
+            <input id="streetAddress" type="text" placeholder="Enter your address"
+              class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-4">
+            <div>
+              <label for="city" class="block text-sm font-medium">City</label>
+              <input id="city" type="text" placeholder="Enter city"
+                class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+            </div>
+            <div>
+              <label for="province" class="block text-sm font-medium">Province</label>
+              <input id="province" type="text" placeholder="Enter your province"
+                class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+            </div>
+            <div>
+              <label for="zipCode" class="block text-sm font-medium">ZIP Code</label>
+              <input id="zipCode" type="text" placeholder="Enter ZIP code"
+                class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+            </div>
+          </div>
+
+          <div>
+            <label for="username" class="block text-sm font-medium">Username</label>
+            <input id="username" type="text" placeholder="Create a username"
+              class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm font-medium">Email Address</label>
+            <input id="email" type="email" placeholder="Email Address"
+              class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+            <p class="text-sm text-gray-600 mt-1">This will be used for account verification and appointment notifications</p>
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-medium">Password</label>
+            <input id="password" type="password" placeholder="Create a password"
+              class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+            <p class="text-sm text-gray-600 mt-1">Must be at least 8 characters long</p>
+          </div>
+
+          <div>
+            <label for="confirmPassword" class="block text-sm font-medium">Confirm Password</label>
+            <input id="confirmPassword" type="password" placeholder="Confirm your password"
+              class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-[#03555E]" />
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <input id="terms" type="checkbox" class="h-4 w-4 border rounded" />
+            <label for="terms" class="text-sm">
+              I agree to the
+              <a href="/terms" class="text-[#03555E] hover:underline">Terms and Conditions</a>
+              and
+              <a href="/privacy" class="text-[#03555E] hover:underline">Privacy Policy</a>
+            </label>
+          </div>
+
+          <button type="submit"
+            class="w-full bg-[#03555E] hover:bg-[#02464E] text-white py-3 rounded-lg font-medium">
+            Submit
+          </button>
+
+          <div class="text-center space-y-2">
+            <p class="text-sm text-gray-600">
+              Already have an account?
+              <a href="/login" class="text-[#03555E] hover:underline font-medium">Log in here</a>
+            </p>
+            <a href="file:///C:/Users/Jennmar%20Cantillo/Documents/UI/Homepage.html" class="text-sm text-gray-600 hover:underline">Return to homepage</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
